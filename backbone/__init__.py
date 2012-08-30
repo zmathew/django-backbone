@@ -1,4 +1,11 @@
+"""Provides AJAX file upload functionality for FileFields and ImageFields with a simple widget replacement in the form."""
+
 from backbone.sites import BackboneSite
+
+
+VERSION = (0, 1, 0)
+
+__version__ = '.'.join(map(str, VERSION))
 
 
 site = BackboneSite()
