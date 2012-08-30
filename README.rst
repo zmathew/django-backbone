@@ -149,11 +149,8 @@ Alternatives/Inspiration
 ------------------------
 This app borrows concepts and patterns from other open source Django/Backbone integration apps. It's worth having a look at them as they may be better suited depending on your use case:
 
-* `djangbone <https://github.com/af/djangbone>`_
-    - Light weight, simliar concept using class based views.
-
-* `backbone-tastypie <https://github.com/PaulUithol/backbone-tastypie>`_
-    - A little heavier as it uses `django-tastypie <https://github.com/toastdriven/django-tastypie>`_ which can provide some powerful API features such as throttling and caching.
+* `djangbone <https://github.com/af/djangbone>`_: Light weight, simliar concept using class based views.
+* `backbone-tastypie <https://github.com/PaulUithol/backbone-tastypie>`_: A little heavier as it uses `django-tastypie <https://github.com/toastdriven/django-tastypie>`_ which can provide some powerful API features such as throttling and caching.
 
 
 License
