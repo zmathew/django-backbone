@@ -75,7 +75,7 @@ class BackboneAPIView(View):
         except ValueError:
             return HttpResponseBadRequest(_('Unable to parse JSON request body.'))
 
-        form = self.get_form(request)(data=data)
+        form = self.get_form_instance(request, data=data)
         if form.is_valid():
             if not self.has_add_permission_for_data(request, form.cleaned_data):
                 return HttpResponseForbidden(_('You do not have permission to perform this action.'))
@@ -116,7 +116,7 @@ class BackboneAPIView(View):
         except ValueError:
             return HttpResponseBadRequest(_('Unable to parse JSON request body.'))
 
-        form = self.get_form(request)(instance=obj, data=data)
+        form = self.get_form_instance(request, data=data, instance=obj)
         if form.is_valid():
             if not self.has_update_permission_for_data(request, form.cleaned_data):
                 return HttpResponseForbidden(_('You do not have permission to perform this action.'))
@@ -127,16 +127,19 @@ class BackboneAPIView(View):
         else:
             return HttpResponseBadRequest(self.json_dumps(form.errors), mimetype='application/json')
 
-    def get_form(self, request):
+    def get_form_instance(self, request, data=None, instance=None):
         """
-        Returns the form to be used for adding or editing an object.
+        Returns an instantiated form to be used for adding or editing an object.
+
+        The `instance` argument is the model instance (passed only if this form
+        is going to be used for editing and existing object).
         """
         defaults = {}
         if self.form:
             defaults['form'] = self.form
         if self.fields:
             defaults['fields'] = self.fields
-        return modelform_factory(self.model, **defaults)
+        return modelform_factory(self.model, **defaults)(data=data, instance=instance)
 
     def delete(self, request, id=None):
         """
