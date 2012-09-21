@@ -77,6 +77,9 @@ class BackboneAPIView(View):
 
         form = self.get_form(request)(data=data)
         if form.is_valid():
+            if not self.has_add_permission_for_data(request, form.cleaned_data):
+                return HttpResponseForbidden(_('You do not have permission to perform this action.'))
+
             obj = form.save()
 
             # We return the newly created object's details and a Location header with it's url
@@ -115,6 +118,8 @@ class BackboneAPIView(View):
 
         form = self.get_form(request)(instance=obj, data=data)
         if form.is_valid():
+            if not self.has_update_permission_for_data(request, form.cleaned_data):
+                return HttpResponseForbidden(_('You do not have permission to perform this action.'))
             form.save()
 
             # We return the updated object details
@@ -163,6 +168,16 @@ class BackboneAPIView(View):
         )
         return request.user.has_perm(perm_string)
 
+    def has_add_permission_for_data(self, request, cleaned_data):
+        """
+        Returns True if the requesting user is allowed to add an object with the
+        given data, False otherwise.
+
+        If the add permission does not depend on the data being submitted,
+        use `has_add_permission` instead.
+        """
+        return True
+
     def has_update_permission(self, request, obj):
         """
         Returns True if the requesting user is allowed to update the given object, False otherwise.
@@ -171,6 +186,16 @@ class BackboneAPIView(View):
             self.model._meta.object_name.lower()
         )
         return request.user.has_perm(perm_string)
+
+    def has_update_permission_for_data(self, request, cleaned_data):
+        """
+        Returns True if the requesting user is allowed to update the object with the
+        given data, False otherwise.
+
+        If the update permission does not depend on the data being submitted,
+        use `has_update_permission` instead.
+        """
+        return True
 
     def has_delete_permission(self, request, obj):
         """

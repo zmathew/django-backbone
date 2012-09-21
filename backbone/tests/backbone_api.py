@@ -15,6 +15,18 @@ class ProductBackboneView(BackboneAPIView):
         qs = super(ProductBackboneView, self).queryset(request)
         return qs.filter(is_hidden=False)
 
+    def has_add_permission_for_data(self, request, cleaned_data):
+        if cleaned_data['name'] == 'NOTALLOWED':
+            return False
+        else:
+            return True
+
+    def has_update_permission_for_data(self, request, cleaned_data):
+        if cleaned_data['name'] == 'NOTALLOWED':
+            return False
+        else:
+            return True
+
 backbone.site.register(ProductBackboneView)
 
 
@@ -25,7 +37,7 @@ class BrandBackboneView(BackboneAPIView):
     fields = ('name',)
     ordering = ('order', 'id')
 
-    def has_delete_permission(self, request, id):
+    def has_delete_permission(self, request, obj):
         return False
 
 backbone.site.register(BrandBackboneView)

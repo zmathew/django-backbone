@@ -256,7 +256,21 @@ class AddTests(TestHelper):
         response = self.client.post(url)
         self.assertEqual(response.status_code, 403)
         self.assertEqual(response.content, _('You do not have permission to perform this action.'))
-        self.assertEqual(Product.objects.count(), 0)
+
+    def test_post_request_on_product_collection_view_violating_field_specific_permission_returns_403(self):
+        brand = self.create_brand()
+        cat1 = self.create_category()
+        data = simplejson.dumps({
+            'name': 'NOTALLOWED',
+            'brand': brand.id,
+            'categories': [cat1.id],
+            'price': 12.34,
+            'order': 1
+        })
+        url = reverse('backbone:tests_product')
+        response = self.client.post(url, data, content_type='application/json')
+        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.content, _('You do not have permission to perform this action.'))
 
     def test_post_request_on_brand_collection_view_uses_custom_model_form(self):
         data = simplejson.dumps({
@@ -376,6 +390,22 @@ class UpdateTests(TestHelper):
 
         url = reverse('backbone:tests_product_detail', args=[product.id])
         response = self.client.put(url)
+        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.content, _('You do not have permission to perform this action.'))
+
+    def test_put_request_on_product_detail_view_violating_field_specific_permission_returns_403(self):
+        product = self.create_product()
+        brand = self.create_brand()
+        cat1 = self.create_category()
+        data = simplejson.dumps({
+            'name': 'NOTALLOWED',
+            'brand': brand.id,
+            'categories': [cat1.id],
+            'price': 12.34,
+            'order': 2
+        })
+        url = reverse('backbone:tests_product_detail', args=[product.id])
+        response = self.client.put(url, data, content_type='application/json')
         self.assertEqual(response.status_code, 403)
         self.assertEqual(response.content, _('You do not have permission to perform this action.'))
 

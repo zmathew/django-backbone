@@ -105,9 +105,8 @@ By default, ``django-backbone`` prevents add, update or delete requests unless t
 
 ``BackboneAPIView`` Hooks
 '''''''''''''''''''''''''
-::
 
-    # TODO: Documentation required.
+Please check out the source code of the class ``backbone.views.BackboneAPIView`` for the full list of hooks. The methods are documented by their docstrings.
 
 
 Reversing the API urls
