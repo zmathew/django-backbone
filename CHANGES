@@ -1,7 +1,7 @@
 0.2.2
 -----
 
-* BackboneAPIView to be imported directly from the backbone module and not from bacbone.views
+* Fixed circular import Issue #1 by moving BackboneAPIView import into autodiscover
 * changed get_form method to get_form_instance
 * added data specific permission checking for add and update
 
