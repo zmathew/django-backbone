@@ -4,7 +4,7 @@ from backbone.sites import BackboneSite
 from backbone.views import BackboneAPIView
 
 
-VERSION = (0, 2, 2)
+VERSION = (0, 2, 1)
 
 __version__ = '.'.join(map(str, VERSION))
 
