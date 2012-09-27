@@ -21,7 +21,7 @@ For example:
         display_fields = ('title', 'description')
         ordering = ('creation_date', 'id')
 
-    backbone.site.register(FooApiView)
+    backbone.site.register(FooAPIView)
 
 
 More advanced customization can be accomplished by hooking into methods on the inherited class - which itself is a class based view. For example:
