@@ -10,10 +10,10 @@ from django.views.generic import View
 
 
 class BackboneAPIView(View):
-    model = None
-    display_fields = []
-    form = None  # The form to be used for adding or editing an object.
-    fields = []  # Fields to allow when adding or editing an object.
+    model = None  # The model to be used for this API definition
+    display_fields = []  # Fields to return for read (GET) requests,
+    fields = []  # Fields to allow when adding (POST) or editing (PUT) objects.
+    form = None  # The form class to be used for adding or editing objects.
     ordering = None  # Ordering used when retrieving the collection
 
     def queryset(self, request):
