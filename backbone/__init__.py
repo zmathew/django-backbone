@@ -1,6 +1,7 @@
 """Provides a Backbone.js compatible REST API for your models."""
 
 from backbone.sites import BackboneSite
+from backbone.views import BackboneAPIView
 
 
 VERSION = (0, 2, 2)

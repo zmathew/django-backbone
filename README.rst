@@ -16,7 +16,7 @@ For example:
     import backbone
     from fooapp.models import Foo
 
-    class FooAPIView(backbone.views.BackboneAPIView):
+    class FooAPIView(backbone.BackboneAPIView):
         model = Foo
         display_fields = ('title', 'description')
         ordering = ('creation_date', 'id')
@@ -29,7 +29,7 @@ More advanced customization can be accomplished by hooking into methods on the i
 
     ...
 
-    class FooAPIView(backbone.views.BackboneAPIView):
+    class FooAPIView(backbone.BackboneAPIView):
         model = Foo
         display_fields = ('title', 'description',)
         ordering = ('creation_date', 'id')
@@ -55,14 +55,14 @@ Features
 
 Usage
 -----
-#. Create a ``backbone_api.py`` file in your app folder and register your API definitions by subclassing ``backbone.views.BackboneAPIView``.
+#. Create a ``backbone_api.py`` file in your app folder and register your API definitions by subclassing ``backbone.BackboneAPIView``.
     ::
 
         # fooapp/backbone_api.py
         import backbone
         from fooapp.models import Foo
 
-        class FooAPIView(backbone.views.BackboneAPIView):
+        class FooAPIView(backbone.BackboneAPIView):
             model = Foo
             display_fields = ('title', 'description')
             ordering = ('creation_date', 'id')
@@ -109,7 +109,7 @@ This can be changed by overriding the appropriate permission hooks (see section 
 ``BackboneAPIView`` Options
 '''''''''''''''''''''''''''
 
-Please check out the source code of the class ``backbone.views.BackboneAPIView`` for the full list of hooks. The methods are documented by their docstrings.
+Please check out the source code of ``BackboneAPIView`` in ``backbone/views.py`` for the full list of options and hooks. The methods are documented by their docstrings.
 
 Here are some basic options that you can customize:
 

@@ -1,5 +1,5 @@
 import backbone
-from backbone.views import BackboneAPIView
+from backbone import BackboneAPIView
 from backbone.tests.forms import BrandForm
 from backbone.tests.models import Product, Brand
 
