@@ -1,10 +1,9 @@
 """Provides a Backbone.js compatible REST API for your models."""
 
 from backbone.sites import BackboneSite
-from backbone.views import BackboneAPIView
 
 
-VERSION = (0, 2, 1)
+VERSION = (0, 2, 2)
 
 __version__ = '.'.join(map(str, VERSION))
 
@@ -20,6 +19,7 @@ def autodiscover():
     from django.conf import settings
     from django.utils.importlib import import_module
     from django.utils.module_loading import module_has_submodule
+    from backbone.views import BackboneAPIView  # This is to prevent a circular import issue
 
     for app in settings.INSTALLED_APPS:
         mod = import_module(app)
