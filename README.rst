@@ -69,7 +69,7 @@ Usage
 
         backbone.site.register(FooAPIView)
 
-        See section on 'BackboneAPIView Hooks' for a full list of options available.
+        See section on 'BackboneAPIView Options' for a full list of options available.
 
 #. In your Javascript collection/model definitions, set the ``url``/``urlRoot`` to point to the ``django-backbone`` API:
     ::
@@ -101,13 +101,23 @@ Usage
 Permissions
 '''''''''''
 
-By default, ``django-backbone`` prevents add, update or delete requests unless the user is logged in and has the ``can_add``, ``can_change`` or ``can_delete`` permission (respectively). This follows the permissions used in the Django admin, with one exception - **read access is permitted** publicly on all registered models. This can be changed by overriding the appropriate permission hooks (see section '``BackboneAPIView`` Hooks').
+By default, ``django-backbone`` prevents add, update or delete requests unless the user is logged in and has the ``can_add``, ``can_change`` or ``can_delete`` permission (respectively). This follows the permissions used in the Django admin, with one exception - **read access is permitted** publicly on all registered models.
+
+This can be changed by overriding the appropriate permission hooks (see section '``BackboneAPIView`` Options').
 
 
-``BackboneAPIView`` Hooks
-'''''''''''''''''''''''''
+``BackboneAPIView`` Options
+'''''''''''''''''''''''''''
 
 Please check out the source code of the class ``backbone.views.BackboneAPIView`` for the full list of hooks. The methods are documented by their docstrings.
+
+Here are some basic options that you can customize:
+
+* ``model``: The model to be used for this API definition
+* ``display_fields``: Fields to return for read (GET) requests,
+* ``fields``: Fields to allow when adding (POST) or editing (PUT) objects.
+* ``form``: The form class to be used for adding or editing objects.
+* ``ordering``: Ordering used when retrieving the collection
 
 
 Reversing the API urls
