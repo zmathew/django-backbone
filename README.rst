@@ -12,6 +12,7 @@ This way you can have quick, out-of-the-box functionality or you can override an
 For example:
 ::
 
+    # fooapp/backbone_api.py
     import backbone
     from fooapp.models import Foo
 
