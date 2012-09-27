@@ -1,0 +1,23 @@
+0.2.2
+-----
+
+* changed get_form method to get_form_instance
+* added data specific permission checking for add and update
+
+
+0.2.1
+-----
+
+* Packaged for PyPi
+
+
+0.2.0
+-----
+
+* Major refactor to API. Using backbone_api.py with autodiscover()
+
+
+0.1.0
+------
+
+* Initial release.
