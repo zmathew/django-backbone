@@ -132,7 +132,7 @@ class BackboneAPIView(View):
         Returns an instantiated form to be used for adding or editing an object.
 
         The `instance` argument is the model instance (passed only if this form
-        is going to be used for editing and existing object).
+        is going to be used for editing an existing object).
         """
         defaults = {}
         if self.form:
