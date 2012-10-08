@@ -11,9 +11,6 @@ class ProductBackboneView(BackboneAPIView):
     fields = ('name', 'brand', 'categories', 'price', 'order',)
     ordering = ('order', 'id')
 
-    def custom_field(self, obj):
-        return
-
     def queryset(self, request):
         qs = super(ProductBackboneView, self).queryset(request)
         return qs.filter(is_hidden=False)
