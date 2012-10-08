@@ -220,8 +220,11 @@ class BackboneAPIView(View):
         # Also, 'id' is not included as a field by the serializer, so this will handle it
         non_db_fields = set(fields) - set(data.keys())
         for field in non_db_fields:
-            if hasattr(obj, field):
-                data[field] = getattr(obj, field)  # id is always returned
+            attr = getattr(obj, field)
+            if callable(attr):
+                data[field] = attr()
+            else:
+                data[field] = attr
         return data
 
     def json_dumps(self, data, **options):
