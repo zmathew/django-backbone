@@ -25,7 +25,7 @@ class BackboneAPIView(View):
             qs = qs.order_by(*self.ordering)
         return qs
 
-    def get(self, request, id=None):
+    def get(self, request, id=None, **kwargs):
         """
         Handles get requests for either the collection or an object detail.
         """
