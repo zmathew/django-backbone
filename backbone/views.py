@@ -52,7 +52,7 @@ class BackboneAPIView(View):
         ]
         return HttpResponse(self.json_dumps(data), mimetype='application/json')
 
-    def post(self, request, id=None):
+    def post(self, request, id=None, **kwargs):
         """
         Handles post requests.
         """
@@ -92,7 +92,7 @@ class BackboneAPIView(View):
         else:
             return HttpResponseBadRequest(self.json_dumps(form.errors), mimetype='application/json')
 
-    def put(self, request, id=None):
+    def put(self, request, id=None, **kwargs):
         """
         Handles put requests.
         """
