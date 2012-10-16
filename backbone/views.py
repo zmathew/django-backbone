@@ -16,7 +16,7 @@ class BackboneAPIView(View):
     form = None  # The form class to be used for adding or editing objects.
     ordering = None  # Ordering used when retrieving the collection
 
-    def queryset(self, request):
+    def queryset(self, request, **kwargs):
         """
         Returns the queryset (along with ordering) to be used when retrieving object(s).
         """
@@ -25,15 +25,15 @@ class BackboneAPIView(View):
             qs = qs.order_by(*self.ordering)
         return qs
 
-    def get(self, request, id=None):
+    def get(self, request, id=None, **kwargs):
         """
         Handles get requests for either the collection or an object detail.
         """
         if id:
-            obj = get_object_or_404(self.queryset(request), id=id)
+            obj = get_object_or_404(self.queryset(request, **kwargs), id=id)
             return self.get_object_detail(request, obj)
         else:
-            return self.get_collection(request)
+            return self.get_collection(request, **kwargs)
 
     def get_object_detail(self, request, obj):
         """
@@ -42,17 +42,17 @@ class BackboneAPIView(View):
         data = self.serialize(obj, ['id'] + list(self.display_fields))
         return HttpResponse(self.json_dumps(data), mimetype='application/json')
 
-    def get_collection(self, request):
+    def get_collection(self, request, **kwargs):
         """
         Handles get requests for the list of all objects.
         """
-        qs = self.queryset(request)
+        qs = self.queryset(request, **kwargs)
         data = [
             self.serialize(obj, ['id'] + list(self.display_fields)) for obj in qs
         ]
         return HttpResponse(self.json_dumps(data), mimetype='application/json')
 
-    def post(self, request, id=None):
+    def post(self, request, id=None, **kwargs):
         """
         Handles post requests.
         """
@@ -92,7 +92,7 @@ class BackboneAPIView(View):
         else:
             return HttpResponseBadRequest(self.json_dumps(form.errors), mimetype='application/json')
 
-    def put(self, request, id=None):
+    def put(self, request, id=None, **kwargs):
         """
         Handles put requests.
         """
