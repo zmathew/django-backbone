@@ -29,7 +29,6 @@ class BackboneAPIView(View):
         """
         Handles get requests for either the collection or an object detail.
         """
-        import ipdb; ipdb.set_trace()
         if id:
             obj = get_object_or_404(self.queryset(request, **kwargs), id=id)
             return self.get_object_detail(request, obj)
