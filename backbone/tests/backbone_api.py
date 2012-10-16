@@ -7,7 +7,7 @@ from backbone.tests.models import Product, Brand
 class ProductBackboneView(BackboneAPIView):
     model = Product
     display_fields = ('creation_date', 'name', 'brand', 'categories',
-        'price', 'order', 'foo',)
+        'price', 'order', 'is_priced_under_10', 'get_first_category_id')
     fields = ('name', 'brand', 'categories', 'price', 'order',)
     ordering = ('order', 'id')
 

@@ -102,26 +102,37 @@ class CollectionTests(TestHelper):
         self.assertEqual(len(data), 1)
         self.assertEqual(data[0]['id'], p1.id)
 
-    def test_collection_view_put_request_returns_405(self):
+    def test_collection_view_put_request_returns_403(self):
         url = reverse('backbone:tests_product')
         response = self.client.put(url)
-        self.assertEqual(response.status_code, 405)
+        self.assertEqual(response.status_code, 403)
 
-    def test_collection_view_delete_request_returns_405(self):
+    def test_collection_view_delete_request_returns_403(self):
         url = reverse('backbone:tests_product')
         response = self.client.delete(url)
-        self.assertEqual(response.status_code, 405)
+        self.assertEqual(response.status_code, 403)
 
 
 class DetailTests(TestHelper):
 
     def test_detail_view_returns_object_details(self):
-        product = self.create_product()
+        product = self.create_product(price=3)
+        category = self.create_category()
+        product.categories.add(category)
+
         url = reverse('backbone:tests_product_detail', args=[product.id])
         response = self.client.get(url)
         data = self.parseJsonResponse(response)
         self.assertEqual(data['id'], product.id)
         self.assertEqual(data['name'], product.name)
+        self.assertEqual(data['brand'], product.brand.id)
+        self.assertEqual(data['categories'], [category.id])
+        self.assertEqual(data['price'], str(product.price))
+        self.assertEqual(data['order'], product.order)
+        # Attribute on model
+        self.assertEqual(data['is_priced_under_10'], True)
+        # Callable on model
+        self.assertEqual(data['get_first_category_id'], category.id)
 
     def test_detail_view_doesnt_return_unspecified_fields(self):
         product = self.create_product()
@@ -142,11 +153,11 @@ class DetailTests(TestHelper):
         response = self.client.get(url)
         self.assertEqual(response.status_code, 404)
 
-    def test_detail_view_post_request_returns_405(self):
+    def test_detail_view_post_request_returns_403(self):
         product = self.create_product()
         url = reverse('backbone:tests_product_detail', args=[product.id])
         response = self.client.post(url)
-        self.assertEqual(response.status_code, 405)
+        self.assertEqual(response.status_code, 403)
 
 
 class AddTests(TestHelper):

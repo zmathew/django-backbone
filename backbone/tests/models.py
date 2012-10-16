@@ -23,5 +23,11 @@ class Product(models.Model):
         ordering = ('id',)
 
     @property
-    def foo(self):
-        return 'foo'
+    def is_priced_under_10(self):
+        return self.price < 10
+
+    def get_first_category_id(self):
+        if self.categories.count():
+            return self.categories.all()[0].id
+        else:
+            return None
