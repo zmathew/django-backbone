@@ -105,6 +105,19 @@ By default, ``django-backbone`` prevents add, update or delete requests unless t
 
 This can be changed by overriding the appropriate permission hooks (see section '``BackboneAPIView`` Options').
 
+Pagination
+'''''''''''
+By default ``django-backbone`` will return all instances of a model upon a get request. By adding a page GET request parameter you enable pagination support for your resource. 
+/backbone/app/model/?page=2 will return all model instances of the second page.
+By default ``django-backbone`` will paginate 25 items a page, this can be overwritten by adding a models_a_page instance variable to your view class.
+
+::
+    class FooAPIView(backbone.views.BackboneAPIView):
+        """
+        This view always pagination by 10 items a page
+        """
+        model = Foo
+        models_a_page = 10
 
 ``BackboneAPIView`` Options
 '''''''''''''''''''''''''''

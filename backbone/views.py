@@ -1,12 +1,14 @@
 from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
 from django.core.urlresolvers import reverse
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.forms.models import modelform_factory
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseForbidden
 from django.shortcuts import get_object_or_404
 from django.utils import simplejson
 from django.utils.translation import ugettext as _
 from django.views.generic import View
+
 
 
 class BackboneAPIView(View):
@@ -47,6 +49,22 @@ class BackboneAPIView(View):
         Handles get requests for the list of all objects.
         """
         qs = self.queryset(request, **kwargs)
+
+        # Look for page request attribute and paginate accordingly if found
+        page = request.GET.get('page')
+        if page:
+            if not hasattr(self, 'models_a_page'):
+                self.models_a_page = 25
+            paginator = Paginator(qs, self.models_a_page) 
+            try:
+                qs = paginator.page(page)
+            except PageNotAnInteger:
+                # If page is not an integer, deliver first page.
+                qs = paginator.page(1)
+            except EmptyPage:
+                # If page is out of range (e.g. 9999), deliver last page of results.
+                qs = paginator.page(paginator.num_pages)
+
         data = [
             self.serialize(obj, ['id'] + list(self.display_fields)) for obj in qs
         ]
