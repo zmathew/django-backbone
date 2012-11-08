@@ -132,6 +132,8 @@ The following named URL patterns are provided for all models that are registered
 
 Installation
 ------------
+Note: ``django-backbone`` requires Django 1.3 or higher.
+
 #. Add ``backbone`` to ``INSTALLED_APPS`` in your settings file.
 #. Hook in the urls and call ``backbone.autodiscover()`` (which will find all ``backbone_api.py`` files in your apps):
     ::
