@@ -112,6 +112,46 @@ class CollectionTests(TestHelper):
         response = self.client.delete(url)
         self.assertEqual(response.status_code, 403)
 
+    def test_collection_view_pagination(self):
+        # Brand is paginated 2 per page
+        p1 = self.create_brand()
+        p2 = self.create_brand()
+        p3 = self.create_brand()
+
+        url = reverse('backbone:tests_brand')
+
+        # First page
+        response = self.client.get(url, {'page': 1})
+        data = self.parseJsonResponse(response)
+        self.assertEqual(len(data), 2)
+        self.assertEqual(data[0]['id'], p1.id)
+        self.assertEqual(data[1]['id'], p2.id)
+
+        # Second Page
+        response = self.client.get(url, {'page': 2})
+        data = self.parseJsonResponse(response)
+        self.assertEqual(len(data), 1)
+        self.assertEqual(data[0]['id'], p3.id)
+
+    def test_collection_view_page_parameter_out_of_range_returns_error(self):
+        url = reverse('backbone:tests_brand')
+
+        response = self.client.get(url, {'page': 2})
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.content, _('Invalid `page` parameter: Out of range.'))
+
+    def test_collection_view_page_parameter_not_an_integer_returns_error(self):
+        url = reverse('backbone:tests_brand')
+
+        response = self.client.get(url, {'page': 'abcd'})
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.content, _('Invalid `page` parameter: Not a valid integer.'))
+
+    def test_collection_view_that_is_not_paginated_ignores_page_parameter(self):
+        url = reverse('backbone:tests_product')
+        response = self.client.get(url, {'page': 999})
+        self.assertEqual(response.status_code, 200)
+
 
 class DetailTests(TestHelper):
 

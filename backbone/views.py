@@ -10,13 +10,14 @@ from django.utils.translation import ugettext as _
 from django.views.generic import View
 
 
-
 class BackboneAPIView(View):
     model = None  # The model to be used for this API definition
     display_fields = []  # Fields to return for read (GET) requests,
     fields = []  # Fields to allow when adding (POST) or editing (PUT) objects.
     form = None  # The form class to be used for adding or editing objects.
     ordering = None  # Ordering used when retrieving the collection
+    paginate_by = None  # If set, pagination will be enabled on the collection
+                        # and this specifies the max number of objects per page.
 
     def queryset(self, request, **kwargs):
         """
@@ -46,24 +47,21 @@ class BackboneAPIView(View):
 
     def get_collection(self, request, **kwargs):
         """
-        Handles get requests for the list of all objects.
+        Handles get requests for the list of objects.
         """
         qs = self.queryset(request, **kwargs)
 
-        # Look for page request attribute and paginate accordingly if found
-        page = request.GET.get('page')
-        if page:
-            if not hasattr(self, 'models_a_page'):
-                self.models_a_page = 25
-            paginator = Paginator(qs, self.models_a_page) 
+        if self.paginate_by is not None:
+            page = request.GET.get('page', 1)
+            paginator = Paginator(qs, self.paginate_by)
             try:
                 qs = paginator.page(page)
             except PageNotAnInteger:
-                # If page is not an integer, deliver first page.
-                qs = paginator.page(1)
+                data = _('Invalid `page` parameter: Not a valid integer.')
+                return HttpResponseBadRequest(data)
             except EmptyPage:
-                # If page is out of range (e.g. 9999), deliver last page of results.
-                qs = paginator.page(paginator.num_pages)
+                data = _('Invalid `page` parameter: Out of range.')
+                return HttpResponseBadRequest(data)
 
         data = [
             self.serialize(obj, ['id'] + list(self.display_fields)) for obj in qs

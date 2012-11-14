@@ -33,9 +33,9 @@ backbone.site.register(ProductBackboneView)
 class BrandBackboneView(BackboneAPIView):
     model = Brand
     form = BrandForm
-    list_display = ('creation_date', 'name',)
+    list_display = ('name',)
     fields = ('name',)
-    ordering = ('order', 'id')
+    paginate_by = 2
 
     def has_delete_permission(self, request, obj):
         return False

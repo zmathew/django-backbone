@@ -5,9 +5,15 @@ from django.utils.translation import ugettext_lazy as _
 class Brand(models.Model):
     name = models.CharField(_('name'), max_length=255)
 
+    class Meta:
+        ordering = ('id',)
+
 
 class Category(models.Model):
     name = models.CharField(_('name'), max_length=255)
+
+    class Meta:
+        ordering = ('id',)
 
 
 class Product(models.Model):
