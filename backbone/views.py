@@ -16,8 +16,7 @@ class BackboneAPIView(View):
     fields = []  # Fields to allow when adding (POST) or editing (PUT) objects.
     form = None  # The form class to be used for adding or editing objects.
     ordering = None  # Ordering used when retrieving the collection
-    paginate_by = None  # If set, pagination will be enabled on the collection
-                        # and this specifies the max number of objects per page.
+    paginate_by = None  # The max number of objects per page (enables use of the ``page`` GET parameter).
 
     def queryset(self, request, **kwargs):
         """
