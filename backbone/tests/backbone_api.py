@@ -1,7 +1,7 @@
 import backbone
 from backbone.views import BackboneAPIView
 from backbone.tests.forms import BrandForm
-from backbone.tests.models import Product, Brand
+from backbone.tests.models import Product, Brand, ExtendedProduct
 
 
 class ProductBackboneView(BackboneAPIView):
@@ -41,3 +41,11 @@ class BrandBackboneView(BackboneAPIView):
         return False
 
 backbone.site.register(BrandBackboneView)
+
+
+class ExtendedProductBackboneView(BackboneAPIView):
+    model = ExtendedProduct
+    display_fields = ('creation_date', 'name', 'brand', 'categories',
+        'price', 'order', 'is_priced_under_10', 'get_first_category_id', 'description',)
+
+backbone.site.register(ExtendedProductBackboneView)

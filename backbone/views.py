@@ -1,4 +1,3 @@
-from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
 from django.core.urlresolvers import reverse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -8,6 +7,8 @@ from django.shortcuts import get_object_or_404
 from django.utils import simplejson
 from django.utils.translation import ugettext as _
 from django.views.generic import View
+
+from backbone.serializers import AllFieldsSerializer
 
 
 class BackboneAPIView(View):
@@ -228,11 +229,12 @@ class BackboneAPIView(View):
         """
         Serializes a single model instance to a Python object, based on the specified list of fields.
         """
-        # Making use of Django's Python serializer (it expects a list, not a single instance)
-        data = serializers.serialize('python', [obj], fields=fields)[0]['fields']
+        serializer = AllFieldsSerializer()
+        serializer.serialize([obj], fields=fields)
+        data = serializer.getvalue()[0]['fields']
 
-        # For any fields that are not actual db fields (perhaps a property), we will manually add it
-        # Also, 'id' is not included as a field by the serializer, so this will handle it
+        # For any fields that are not actual db fields (perhaps a property),
+        # we will manually add it
         non_db_fields = set(fields) - set(data.keys())
         for field in non_db_fields:
             attr = getattr(obj, field)

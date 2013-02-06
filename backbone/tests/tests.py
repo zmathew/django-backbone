@@ -6,7 +6,7 @@ from django.test import TestCase
 from django.utils import simplejson
 from django.utils.translation import ugettext as _
 
-from backbone.tests.models import Product, Brand, Category
+from backbone.tests.models import Product, Brand, Category, ExtendedProduct
 from backbone.tests.backbone_api import ProductBackboneView
 
 
@@ -27,6 +27,16 @@ class TestHelper(TestCase):
             defaults['brand'] = self.create_brand()
         defaults.update(kwargs)
         return Product.objects.create(**defaults)
+
+    def create_extended_product(self, **kwargs):
+        defaults = {
+            'name': 'Test Product',
+            'price': '12.32'
+        }
+        if 'brand' not in kwargs:
+            defaults['brand'] = self.create_brand()
+        defaults.update(kwargs)
+        return ExtendedProduct.objects.create(**defaults)
 
     def create_brand(self, **kwargs):
         defaults = {
@@ -516,3 +526,26 @@ class DeleteTests(TestHelper):
         self.assertEqual(response.status_code, 403)
         self.assertEqual(response.content, _('You do not have permission to perform this action.'))
         self.assertEqual(Brand.objects.count(), 1)
+
+
+class InheritanceTests(TestHelper):
+
+    def test_detail_view_returns_inherited_object_details(self):
+        ext_product = self.create_extended_product(price=9)
+        category = self.create_category()
+        ext_product.categories.add(category)
+
+        url = reverse('backbone:tests_extendedproduct_detail', args=[ext_product.id])
+        response = self.client.get(url)
+        data = self.parseJsonResponse(response)
+        self.assertEqual(data['id'], ext_product.id)
+        self.assertEqual(data['name'], ext_product.name)
+        self.assertEqual(data['brand'], ext_product.brand.id)
+        self.assertEqual(data['categories'], [category.id])
+        self.assertEqual(data['price'], str(ext_product.price))
+        self.assertEqual(data['order'], ext_product.order)
+        self.assertEqual(data['description'], ext_product.description)
+        # Attribute on model
+        self.assertEqual(data['is_priced_under_10'], True)
+        # Callable on model
+        self.assertEqual(data['get_first_category_id'], category.id)

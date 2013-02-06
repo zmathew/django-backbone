@@ -37,3 +37,7 @@ class Product(models.Model):
             return self.categories.all()[0].id
         else:
             return None
+
+
+class ExtendedProduct(Product):
+    description = models.CharField(max_length=255)
