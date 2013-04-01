@@ -1,9 +1,9 @@
-"""Provides a Backbone.js compatible REST API for your models."""
+"""Provides a Backbone.js compatible REST API for your models using Django Admin style registration."""
 
 from backbone.sites import BackboneSite
 
 
-VERSION = (0, 2, 3)
+VERSION = (0, 3, 0)
 
 __version__ = '.'.join(map(str, VERSION))
 

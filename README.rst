@@ -48,7 +48,7 @@ More advanced customization can be accomplished by hooking into methods on the i
 
 Features
 --------
-* Automatically generates a JSON REST API for your models that works perfectly with Backbone.js.
+* Automatically generates a JSON REST API for your models that works nicely with Backbone.js.
 * API based on class based views and model forms allowing for fine-grained customization and extensibility.
 * Customizable permission restrictions. By default it uses ``django.contrib.auth`` authentication and permissions (similar to Django admin).
 
