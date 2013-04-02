@@ -79,7 +79,11 @@ class CollectionTests(TestHelper):
         self.assertEqual(len(data), 1)
         fields = data[0].keys()
 
-        self.assertEqual(set(['id'] + list(ProductBackboneView.display_fields)), set(fields))
+        expected_fields = [
+            'id', 'creation_date', 'name', 'brand', 'categories', 'price', 'order',
+            'is_priced_under_10', 'get_first_category_id', 'custom1'
+        ]
+        self.assertEqual(set(expected_fields), set(fields))
         self.assertTrue('is_hidden' not in fields)
 
     def test_collection_view_foreign_key_is_returned_as_id(self):
@@ -181,6 +185,8 @@ class DetailTests(TestHelper):
         self.assertEqual(data['order'], product.order)
         # Attribute on model
         self.assertEqual(data['is_priced_under_10'], True)
+        # Callable
+        self.assertEqual(data['custom1'], 'custom1: %s' % product.name)
         # Callable on model
         self.assertEqual(data['get_first_category_id'], category.id)
 

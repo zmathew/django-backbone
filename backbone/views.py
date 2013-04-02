@@ -239,11 +239,14 @@ class BackboneAPIView(View):
         # we will manually add it
         non_db_fields = set(fields) - set(data.keys())
         for field in non_db_fields:
-            attr = getattr(obj, field)
-            if callable(attr):
-                data[field] = attr()
+            if callable(field):
+                data[field.__name__] = field(obj)
             else:
-                data[field] = attr
+                attr = getattr(obj, field)
+                if callable(attr):
+                    data[field] = attr()
+                else:
+                    data[field] = attr
         return data
 
     def json_dumps(self, data, **options):
