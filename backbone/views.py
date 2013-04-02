@@ -238,7 +238,9 @@ class BackboneAPIView(View):
         # For any fields that are not actual db fields (perhaps a property),
         # we will manually add it
         non_db_fields = set(fields) - set(data.keys())
+        missing_fields = set()
         for field in non_db_fields:
+<<<<<<< HEAD
             if callable(field):
                 data[field.__name__] = field(obj)
             elif hasattr(self, field):
@@ -249,7 +251,35 @@ class BackboneAPIView(View):
                     data[field] = attr()
                 else:
                     data[field] = attr
+=======
+            try:
+                attr = getattr(obj, field)
+            except AttributeError:
+                missing_fields.add(field)
+            else:
+                if callable(attr):
+                    data[field] = attr()
+                else:
+                    data[field] = attr
+
+        # For any fields that are not db fields or part of the model, we check for
+        # a method on the backbone API class.
+        non_model_fields = missing_fields
+        missing_fields = set()
+        
+        for field in non_model_fields:
+            try:
+                attr = getattr(self, field)
+            except AttributeError:
+                missing_fields.add(field)
+            else:
+                data[field] = attr(obj)
+        if missing_fields:
+            raise AttributeError("Missing the following fields for backbone API view: %s"
+                    % list(missing_fields))
+>>>>>>> ad1065d
         return data
+
 
     def json_dumps(self, data, **options):
         """
