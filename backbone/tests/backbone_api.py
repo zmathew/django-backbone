@@ -11,9 +11,12 @@ class ProductBackboneView(BackboneAPIView):
     model = Product
     display_fields = (
         'creation_date', 'name', 'brand', 'categories', 'price', 'order',
-        'is_priced_under_10', 'get_first_category_id', custom1)
+        'is_priced_under_10', 'get_first_category_id', custom1, 'custom2')
     fields = ('name', 'brand', 'categories', 'price', 'order',)
     ordering = ('order', 'id')
+
+    def custom2(self, obj):
+        return 'custom2: %s' % obj.name
 
     def queryset(self, request):
         qs = super(ProductBackboneView, self).queryset(request)

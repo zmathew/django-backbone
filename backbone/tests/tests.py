@@ -81,7 +81,7 @@ class CollectionTests(TestHelper):
 
         expected_fields = [
             'id', 'creation_date', 'name', 'brand', 'categories', 'price', 'order',
-            'is_priced_under_10', 'get_first_category_id', 'custom1'
+            'is_priced_under_10', 'get_first_category_id', 'custom1', 'custom2'
         ]
         self.assertEqual(set(expected_fields), set(fields))
         self.assertTrue('is_hidden' not in fields)
@@ -187,6 +187,8 @@ class DetailTests(TestHelper):
         self.assertEqual(data['is_priced_under_10'], True)
         # Callable
         self.assertEqual(data['custom1'], 'custom1: %s' % product.name)
+        # Callable on admin class
+        self.assertEqual(data['custom2'], 'custom2: %s' % product.name)
         # Callable on model
         self.assertEqual(data['get_first_category_id'], category.id)
 

@@ -241,6 +241,8 @@ class BackboneAPIView(View):
         for field in non_db_fields:
             if callable(field):
                 data[field.__name__] = field(obj)
+            elif hasattr(self, field):
+                data[field] = getattr(self, field)(obj)
             else:
                 attr = getattr(obj, field)
                 if callable(attr):
