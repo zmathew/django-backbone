@@ -7,7 +7,6 @@ from django.test import TestCase
 from django.utils.translation import ugettext as _
 
 from backbone.tests.models import Product, Brand, Category, ExtendedProduct
-from backbone.tests.backbone_api import ProductBackboneView
 
 
 class TestHelper(TestCase):
@@ -21,7 +20,8 @@ class TestHelper(TestCase):
     def create_product(self, **kwargs):
         defaults = {
             'name': 'Test Product',
-            'price': '12.32'
+            'price': '12.32',
+            'sku': '12345678'
         }
         if 'brand' not in kwargs:
             defaults['brand'] = self.create_brand()
@@ -81,7 +81,7 @@ class CollectionTests(TestHelper):
 
         expected_fields = [
             'id', 'creation_date', 'name', 'brand', 'categories', 'price', 'order',
-            'is_priced_under_10', 'get_first_category_id', 'custom1', 'custom2'
+            'is_priced_under_10', 'get_first_category_id', 'sku', 'custom2'
         ]
         self.assertEqual(set(expected_fields), set(fields))
         self.assertTrue('is_hidden' not in fields)
@@ -186,7 +186,7 @@ class DetailTests(TestHelper):
         # Attribute on model
         self.assertEqual(data['is_priced_under_10'], True)
         # Callable
-        self.assertEqual(data['custom1'], 'custom1: %s' % product.name)
+        self.assertEqual(data['sku'], '#: %s' % product.sku)
         # Callable on admin class
         self.assertEqual(data['custom2'], 'custom2: %s' % product.name)
         # Callable on model

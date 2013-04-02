@@ -232,7 +232,7 @@ class BackboneAPIView(View):
         Serializes a single model instance to a Python object, based on the specified list of fields.
         """
         serializer = AllFieldsSerializer()
-        serializer.serialize([obj], fields=fields)
+        serializer.serialize([obj], fields=[f for f in fields if not callable(f)])
         data = serializer.getvalue()[0]['fields']
 
         # For any fields that are not actual db fields (perhaps a property),
