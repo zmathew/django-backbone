@@ -231,56 +231,34 @@ class BackboneAPIView(View):
         """
         Serializes a single model instance to a Python object, based on the specified list of fields.
         """
-<<<<<<< HEAD
-        serializer = AllFieldsSerializer()
-        serializer.serialize([obj], fields=[f for f in fields if not callable(f)])
-        data = serializer.getvalue()[0]['fields']
-=======
+
         data = {}
-        missing_fields = set()
+        remaining_fields = []
         for field in fields:
-            try:
-                attr = getattr(self, field)
-            except AttributeError:
-                missing_fields.add(field)
-            else:
-                data[field] = attr(obj)
-
-        # Making use of Django's Python serializer (it expects a list, not a single instance)
-        data.update(serializers.serialize('python', [obj], fields=list(missing_fields))[0]['fields'])
->>>>>>> 04599f2
-
-        # For any fields that are not actual db fields (perhaps a property),
-        # we will manually add it
-        non_db_fields = set(fields) - set(data.keys())
-        missing_fields = set()
-        for field in non_db_fields:
-<<<<<<< HEAD
-            if callable(field):
+            if callable(field):  # Callable
                 data[field.__name__] = field(obj)
-            elif hasattr(self, field):
+            elif hasattr(self, field):  # Method on the view
                 data[field] = getattr(self, field)(obj)
-            else:
+            elif hasattr(obj, field):  # Callable/property/field on the model
                 attr = getattr(obj, field)
-                if callable(attr):
+                if callable(attr):  # Callable on the model
                     data[field] = attr()
                 else:
-                    data[field] = attr
-=======
-            try:
-                attr = getattr(obj, field)
-            except AttributeError:
-                missing_fields.add(field)
+                    remaining_fields.append(field)
             else:
-                if callable(attr):
-                    data[field] = attr()
-                else:
-                    data[field] = attr
+                raise AttributeError('Invalid field: %s' % field)
 
-        if missing_fields:
-            raise AttributeError("Missing the following fields for backbone API view: %s"
-                    % list(missing_fields))
->>>>>>> ad1065d
+        # Add on db fields
+        serializer = AllFieldsSerializer()
+        serializer.serialize([obj], fields=list(remaining_fields))
+        data.update(serializer.getvalue()[0]['fields'])
+
+        # Any remaining fields should be properties on the model
+        remaining_fields = set(remaining_fields) - set(data.keys())
+
+        for field in remaining_fields:
+            data[field] = getattr(obj, field)
+
         return data
 
     def json_dumps(self, data, **options):

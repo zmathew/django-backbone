@@ -7,6 +7,7 @@ from django.test import TestCase
 from django.utils.translation import ugettext as _
 
 from backbone.tests.models import Product, Brand, Category, ExtendedProduct
+from backbone.tests.backbone_api import BrandBackboneView
 
 
 class TestHelper(TestCase):
@@ -557,3 +558,19 @@ class InheritanceTests(TestHelper):
         self.assertEqual(data['is_priced_under_10'], True)
         # Callable on model
         self.assertEqual(data['get_first_category_id'], category.id)
+
+
+class InvalidViewTests(TestHelper):
+    def setUp(self):
+        BrandBackboneView.display_fields += ['invalid_field']
+
+    def tearDown(self):
+        BrandBackboneView.display_fields.remove('invalid_field')
+
+    def test_invalid_field_name_raises_attribute_error(self):
+        brand = self.create_brand()
+        url = reverse('backbone:tests_brand_detail', args=[brand.id])
+        try:
+            self.client.get(url)
+        except AttributeError, err:
+            self.assertEqual(str(err), "Invalid field: invalid_field")

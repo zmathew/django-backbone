@@ -40,7 +40,7 @@ backbone.site.register(ProductBackboneView)
 class BrandBackboneView(BackboneAPIView):
     model = Brand
     form = BrandForm
-    list_display = ('name',)
+    display_fields = ['name',]
     fields = ('name',)
     paginate_by = 2
 
