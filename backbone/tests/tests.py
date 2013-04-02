@@ -1,9 +1,9 @@
 from decimal import Decimal
+import json
 
 from django.contrib.auth.models import User, Permission
 from django.core.urlresolvers import reverse
 from django.test import TestCase
-from django.utils import simplejson
 from django.utils.translation import ugettext as _
 
 from backbone.tests.models import Product, Brand, Category, ExtendedProduct
@@ -15,7 +15,7 @@ class TestHelper(TestCase):
     def parseJsonResponse(self, response, status_code=200):
         self.assertEqual(response.status_code, status_code)
         self.assertEqual(response['Content-Type'], 'application/json')
-        data = simplejson.loads(response.content)
+        data = json.loads(response.content)
         return data
 
     def create_product(self, **kwargs):
@@ -223,7 +223,7 @@ class AddTests(TestHelper):
         brand = self.create_brand()
         cat1 = self.create_category()
         cat2 = self.create_category()
-        data = simplejson.dumps({
+        data = json.dumps({
             'name': 'Test',
             'brand': brand.id,
             'categories': [cat1.id, cat2.id],
@@ -265,7 +265,7 @@ class AddTests(TestHelper):
         self.assertEqual(response.content, _('Unable to parse JSON request body.'))
 
     def test_post_request_on_product_collection_view_with_validation_errors_returns_error_list_as_json(self):
-        data = simplejson.dumps({
+        data = json.dumps({
             'name': '',
             'brand': '',
             'categories': [],
@@ -285,7 +285,7 @@ class AddTests(TestHelper):
         brand = self.create_brand()
         cat1 = self.create_category()
         cat2 = self.create_category()
-        data = simplejson.dumps({
+        data = json.dumps({
             'name': 'Test',
             'brand': brand.id,
             'categories': [cat1.id, cat2.id],
@@ -321,7 +321,7 @@ class AddTests(TestHelper):
     def test_post_request_on_product_collection_view_violating_field_specific_permission_returns_403(self):
         brand = self.create_brand()
         cat1 = self.create_category()
-        data = simplejson.dumps({
+        data = json.dumps({
             'name': 'NOTALLOWED',
             'brand': brand.id,
             'categories': [cat1.id],
@@ -334,7 +334,7 @@ class AddTests(TestHelper):
         self.assertEqual(response.content, _('You do not have permission to perform this action.'))
 
     def test_post_request_on_brand_collection_view_uses_custom_model_form(self):
-        data = simplejson.dumps({
+        data = json.dumps({
             'name': 'this should give an error',
         })
         url = reverse('backbone:tests_brand')
@@ -360,7 +360,7 @@ class UpdateTests(TestHelper):
         brand = self.create_brand()
         cat1 = self.create_category()
         cat2 = self.create_category()
-        data = simplejson.dumps({
+        data = json.dumps({
             'name': 'Test',
             'brand': brand.id,
             'categories': [cat1.id, cat2.id],
@@ -401,7 +401,7 @@ class UpdateTests(TestHelper):
 
     def test_put_request_on_product_detail_view_with_validation_errors_returns_error_list_as_json(self):
         product = self.create_product()
-        data = simplejson.dumps({
+        data = json.dumps({
             'name': '',
             'price': None,
             'order': '',
@@ -420,7 +420,7 @@ class UpdateTests(TestHelper):
         brand = self.create_brand()
         cat1 = self.create_category()
         cat2 = self.create_category()
-        data = simplejson.dumps({
+        data = json.dumps({
             'name': 'Test',
             'brand': brand.id,
             'categories': [cat1.id, cat2.id],
@@ -458,7 +458,7 @@ class UpdateTests(TestHelper):
         product = self.create_product()
         brand = self.create_brand()
         cat1 = self.create_category()
-        data = simplejson.dumps({
+        data = json.dumps({
             'name': 'NOTALLOWED',
             'brand': brand.id,
             'categories': [cat1.id],
@@ -472,7 +472,7 @@ class UpdateTests(TestHelper):
 
     def test_put_request_on_brand_collection_view_uses_custom_model_form(self):
         brand = self.create_brand()
-        data = simplejson.dumps({
+        data = json.dumps({
             'name': 'this should give an error',
         })
         url = reverse('backbone:tests_brand_detail', args=[brand.id])

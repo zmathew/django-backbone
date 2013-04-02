@@ -1,10 +1,11 @@
+import json
+
 from django.core.serializers.json import DjangoJSONEncoder
 from django.core.urlresolvers import reverse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.forms.models import modelform_factory
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseForbidden
 from django.shortcuts import get_object_or_404
-from django.utils import simplejson
 from django.utils.translation import ugettext as _
 from django.views.generic import View
 
@@ -87,7 +88,7 @@ class BackboneAPIView(View):
         try:
             # backbone sends data in the body in json format
             # Conditional statement is for backwards compatibility with Django <= 1.3
-            data = simplejson.loads(request.body if hasattr(request, 'body') else request.raw_post_data)
+            data = json.loads(request.body if hasattr(request, 'body') else request.raw_post_data)
         except ValueError:
             return HttpResponseBadRequest(_('Unable to parse JSON request body.'))
 
@@ -128,8 +129,8 @@ class BackboneAPIView(View):
         """
         try:
             # backbone sends data in the body in json format
-            # Conditional statement is for backwards compatibility with Django <= 1.3
-            data = simplejson.loads(request.body if hasattr(request, 'body') else request.raw_post_data)
+                # Conditional statement is for backwards compatibility with Django <= 1.3
+            data = json.loads(request.body if hasattr(request, 'body') else request.raw_post_data)
         except ValueError:
             return HttpResponseBadRequest(_('Unable to parse JSON request body.'))
 
@@ -247,12 +248,12 @@ class BackboneAPIView(View):
 
     def json_dumps(self, data, **options):
         """
-        Wrapper around `simplejson.dumps` that uses a special JSON encoder.
+        Wrapper around `json.dumps` that uses a special JSON encoder.
         """
         params = {'sort_keys': True, 'indent': 2}
         params.update(options)
         # This code is based off django's built in JSON serializer
-        if simplejson.__version__.split('.') >= ['2', '1', '3']:
+        if json.__version__.split('.') >= ['2', '1', '3']:
             # Use JS strings to represent Python Decimal instances (ticket #16850)
             params.update({'use_decimal': False})
-        return simplejson.dumps(data, cls=DjangoJSONEncoder, **params)
+        return json.dumps(data, cls=DjangoJSONEncoder, **params)
