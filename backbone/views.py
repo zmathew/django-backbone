@@ -55,14 +55,13 @@ class BackboneAPIView(View):
             page = request.GET.get('page', 1)
             paginator = Paginator(qs, self.paginate_by)
             try:
-                qs = paginator.page(page)
+                qs = paginator.page(page).object_list
             except PageNotAnInteger:
                 data = _('Invalid `page` parameter: Not a valid integer.')
                 return HttpResponseBadRequest(data)
             except EmptyPage:
                 data = _('Invalid `page` parameter: Out of range.')
                 return HttpResponseBadRequest(data)
-
         data = [
             self.serialize(obj, ['id'] + list(self.display_fields)) for obj in qs
         ]
