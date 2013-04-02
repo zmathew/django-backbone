@@ -231,9 +231,24 @@ class BackboneAPIView(View):
         """
         Serializes a single model instance to a Python object, based on the specified list of fields.
         """
+<<<<<<< HEAD
         serializer = AllFieldsSerializer()
         serializer.serialize([obj], fields=[f for f in fields if not callable(f)])
         data = serializer.getvalue()[0]['fields']
+=======
+        data = {}
+        missing_fields = set()
+        for field in fields:
+            try:
+                attr = getattr(self, field)
+            except AttributeError:
+                missing_fields.add(field)
+            else:
+                data[field] = attr(obj)
+
+        # Making use of Django's Python serializer (it expects a list, not a single instance)
+        data.update(serializers.serialize('python', [obj], fields=list(missing_fields))[0]['fields'])
+>>>>>>> 04599f2
 
         # For any fields that are not actual db fields (perhaps a property),
         # we will manually add it
@@ -262,24 +277,11 @@ class BackboneAPIView(View):
                 else:
                     data[field] = attr
 
-        # For any fields that are not db fields or part of the model, we check for
-        # a method on the backbone API class.
-        non_model_fields = missing_fields
-        missing_fields = set()
-        
-        for field in non_model_fields:
-            try:
-                attr = getattr(self, field)
-            except AttributeError:
-                missing_fields.add(field)
-            else:
-                data[field] = attr(obj)
         if missing_fields:
             raise AttributeError("Missing the following fields for backbone API view: %s"
                     % list(missing_fields))
 >>>>>>> ad1065d
         return data
-
 
     def json_dumps(self, data, **options):
         """
