@@ -86,7 +86,8 @@ class BackboneAPIView(View):
         """
         try:
             # backbone sends data in the body in json format
-            data = simplejson.loads(request.raw_post_data)
+            # Conditional statement is for backwards compatibility with Django <= 1.3
+            data = simplejson.loads(request.body if hasattr(request, 'body') else request.raw_post_data)
         except ValueError:
             return HttpResponseBadRequest(_('Unable to parse JSON request body.'))
 
@@ -127,7 +128,8 @@ class BackboneAPIView(View):
         """
         try:
             # backbone sends data in the body in json format
-            data = simplejson.loads(request.raw_post_data)
+            # Conditional statement is for backwards compatibility with Django <= 1.3
+            data = simplejson.loads(request.body if hasattr(request, 'body') else request.raw_post_data)
         except ValueError:
             return HttpResponseBadRequest(_('Unable to parse JSON request body.'))
 
