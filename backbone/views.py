@@ -44,7 +44,7 @@ class BackboneAPIView(View):
         Handles get requests for the details of the given object.
         """
         data = self.serialize(obj, ['id'] + list(self.display_fields))
-        return HttpResponse(self.json_dumps(data), mimetype='application/json')
+        return HttpResponse(self.json_dumps(data), content_type='application/json')
 
     def get_collection(self, request, **kwargs):
         """
@@ -66,7 +66,7 @@ class BackboneAPIView(View):
         data = [
             self.serialize(obj, ['id'] + list(self.display_fields)) for obj in qs
         ]
-        return HttpResponse(self.json_dumps(data), mimetype='application/json')
+        return HttpResponse(self.json_dumps(data), content_type='application/json')
 
     def post(self, request, id=None, **kwargs):
         """
@@ -107,7 +107,7 @@ class BackboneAPIView(View):
             response['Location'] = reverse(url_name, args=[obj.id])
             return response
         else:
-            return HttpResponseBadRequest(self.json_dumps(form.errors), mimetype='application/json')
+            return HttpResponseBadRequest(self.json_dumps(form.errors), content_type='application/json')
 
     def put(self, request, id=None, **kwargs):
         """
@@ -143,7 +143,7 @@ class BackboneAPIView(View):
             # We return the updated object details
             return self.get_object_detail(request, obj)
         else:
-            return HttpResponseBadRequest(self.json_dumps(form.errors), mimetype='application/json')
+            return HttpResponseBadRequest(self.json_dumps(form.errors), content_type='application/json')
 
     def get_form_instance(self, request, data=None, instance=None):
         """
