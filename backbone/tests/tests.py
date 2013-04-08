@@ -6,7 +6,7 @@ from django.core.urlresolvers import reverse
 from django.test import TestCase
 from django.utils.translation import ugettext as _
 
-from backbone.tests.models import Product, Brand, Category, ExtendedProduct
+from backbone.tests.models import Product, Brand, Category, ExtendedProduct, DisplayFieldsProduct
 from backbone.tests.backbone_api import BrandBackboneView
 
 
@@ -38,6 +38,16 @@ class TestHelper(TestCase):
             defaults['brand'] = self.create_brand()
         defaults.update(kwargs)
         return ExtendedProduct.objects.create(**defaults)
+
+    def create_displayfields_product(self, **kwargs):
+        defaults = {
+            'name': 'Beta Product',
+            'price': '13.32'
+        }
+        if 'brand' not in kwargs:
+            defaults['brand'] = self.create_brand()
+        defaults.update(kwargs)
+        return DisplayFieldsProduct.objects.create(**defaults)
 
     def create_brand(self, **kwargs):
         defaults = {
@@ -192,6 +202,59 @@ class DetailTests(TestHelper):
         self.assertEqual(data['custom2'], 'custom2: %s' % product.name)
         # Callable on model
         self.assertEqual(data['get_first_category_id'], category.id)
+
+    def test_detail_view_uses_display_detail_fields_when_defined(self):
+        display_fields_product = self.create_displayfields_product(price=111)
+        category = self.create_category()
+        display_fields_product.categories.add(category)
+
+        url = reverse('backbone:tests_displayfieldsproduct_detail', args=[display_fields_product.id])
+        response = self.client.get(url)
+        data = self.parseJsonResponse(response)
+
+        self.assertEqual(data['id'], display_fields_product.id)
+        self.assertEqual(data['name'], display_fields_product.name)
+        self.assertEqual(data['brand'], display_fields_product.brand.id)
+        self.assertEqual(data['categories'], [category.id])
+        self.assertTrue('price' not in data)
+        self.assertTrue('order' not in data)
+        # Attribute on model
+        self.assertTrue('is_priced_under_10' not in data)
+        # Callable
+        self.assertTrue('sku' not in data)
+        # Callable on admin class
+        self.assertTrue('custom2' not in data)
+        # Callable on model
+        self.assertTrue('get_first_category_id' not in data)
+        self.assertEqual(len(data.keys()), 4)
+
+    def test_collection_view_uses_display_collection_fields_when_defined(self):
+        display_fields_product = self.create_displayfields_product(price=111)
+        category = self.create_category()
+        display_fields_product.categories.add(category)
+
+        url = reverse('backbone:tests_displayfieldsproduct')
+        response = self.client.get(url)
+        data = self.parseJsonResponse(response)
+
+        self.assertEqual(len(data), 1)
+
+        data = data[0]
+        self.assertEqual(data['id'], display_fields_product.id)
+        self.assertEqual(data['name'], display_fields_product.name)
+        self.assertEqual(data['brand'], display_fields_product.brand.id)
+        self.assertEqual(data['categories'], [category.id])
+        self.assertTrue('price' not in data)
+        self.assertTrue('order' not in data)
+        # Attribute on model
+        self.assertTrue('is_priced_under_10' not in data)
+        # Callable
+        self.assertTrue('sku' not in data)
+        # Callable on admin class
+        self.assertTrue('custom2' not in data)
+        # Callable on model
+        self.assertTrue('get_first_category_id' not in data)
+        self.assertEqual(len(data.keys()), 4)
 
     def test_detail_view_doesnt_return_unspecified_fields(self):
         product = self.create_product()

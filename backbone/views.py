@@ -15,6 +15,8 @@ from backbone.serializers import AllFieldsSerializer
 class BackboneAPIView(View):
     model = None  # The model to be used for this API definition
     display_fields = []  # Fields to return for read (GET) requests,
+    display_collection_fields = [] # Specific fields to return for a read (GET) request of a model collection
+    display_detail_fields = [] # Specific fields to return for read (GET) requests for a specific model
     fields = []  # Fields to allow when adding (POST) or editing (PUT) objects.
     form = None  # The form class to be used for adding or editing objects.
     ordering = None  # Ordering used when retrieving the collection
@@ -43,7 +45,12 @@ class BackboneAPIView(View):
         """
         Handles get requests for the details of the given object.
         """
-        data = self.serialize(obj, ['id'] + list(self.display_fields))
+        if self.display_detail_fields:
+            display_fields = self.display_detail_fields
+        else:
+            display_fields = self.display_fields
+
+        data = self.serialize(obj, ['id'] + list(display_fields))
         return HttpResponse(self.json_dumps(data), content_type='application/json')
 
     def get_collection(self, request, **kwargs):
@@ -51,6 +58,11 @@ class BackboneAPIView(View):
         Handles get requests for the list of objects.
         """
         qs = self.queryset(request, **kwargs)
+
+        if self.display_collection_fields:
+            display_fields = self.display_collection_fields
+        else:
+            display_fields = self.display_fields
 
         if self.paginate_by is not None:
             page = request.GET.get('page', 1)
@@ -64,7 +76,7 @@ class BackboneAPIView(View):
                 data = _('Invalid `page` parameter: Out of range.')
                 return HttpResponseBadRequest(data)
         data = [
-            self.serialize(obj, ['id'] + list(self.display_fields)) for obj in qs
+            self.serialize(obj, ['id'] + list(display_fields)) for obj in qs
         ]
         return HttpResponse(self.json_dumps(data), content_type='application/json')
 

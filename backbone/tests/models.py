@@ -42,3 +42,7 @@ class Product(models.Model):
 
 class ExtendedProduct(Product):
     description = models.CharField(max_length=255)
+
+
+class DisplayFieldsProduct(Product):
+    description = models.CharField(max_length=255)
