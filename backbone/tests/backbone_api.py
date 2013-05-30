@@ -50,6 +50,17 @@ class BrandBackboneView(BackboneAPIView):
 backbone.site.register(BrandBackboneView)
 
 
+class BrandAlternateBackboneView(BackboneAPIView):
+    model = Brand
+    display_fields = ['id', 'custom']
+    url_slug = 'brand_alternate'
+
+    def custom(self, obj):
+        return 'foo'
+
+backbone.site.register(BrandAlternateBackboneView)
+
+
 class ExtendedProductBackboneView(BackboneAPIView):
     model = ExtendedProduct
     display_fields = ('creation_date', 'name', 'brand', 'categories',

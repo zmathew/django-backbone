@@ -177,6 +177,15 @@ class CollectionTests(TestHelper):
         response = self.client.get(url, {'page': 999})
         self.assertEqual(response.status_code, 200)
 
+    def test_collection_view_for_view_with_custom_url_slug(self):
+        brand = self.create_brand()
+        url = reverse('backbone:tests_brand_alternate')
+        response = self.client.get(url)
+        data = self.parseJsonResponse(response)
+        self.assertEqual(len(data), 1)
+        self.assertEqual(data[0]['id'], brand.id)
+        self.assertEqual(data[0]['custom'], 'foo')
+
 
 class DetailTests(TestHelper):
 
@@ -280,6 +289,14 @@ class DetailTests(TestHelper):
         url = reverse('backbone:tests_product_detail', args=[product.id])
         response = self.client.post(url)
         self.assertEqual(response.status_code, 403)
+
+    def test_detail_view_for_view_with_custom_url_slug(self):
+        brand = self.create_brand()
+        url = reverse('backbone:tests_brand_alternate_detail', args=[brand.id])
+        response = self.client.get(url)
+        data = self.parseJsonResponse(response)
+        self.assertEqual(data['id'], brand.id)
+        self.assertEqual(data['custom'], 'foo')
 
 
 class AddTests(TestHelper):
@@ -411,10 +428,26 @@ class AddTests(TestHelper):
         })
         url = reverse('backbone:tests_brand')
         response = self.client.post(url, data, content_type='application/json')
-        self.assertEqual(Product.objects.count(), 0)
+        self.assertEqual(Brand.objects.count(), 0)
         data = self.parseJsonResponse(response, status_code=400)
         self.assertEqual(len(data), 1)
         self.assertEqual(data['name'], [_('Brand name must start with a capital letter.')])
+
+    def test_post_request_on_custom_url_slug_view_contains_custom_url_in_location_header(self):
+        data = json.dumps({
+            'name': 'Foo',
+        })
+        url = reverse('backbone:tests_brand_alternate')
+        response = self.client.post(url, data, content_type='application/json')
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(Brand.objects.count(), 1)
+
+        self.assertEqual(
+            response['Location'],
+            'http://testserver' + reverse(
+                'backbone:tests_brand_alternate_detail', args=[Brand.objects.get().id]
+            )
+        )
 
 
 class UpdateTests(TestHelper):

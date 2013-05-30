@@ -21,6 +21,8 @@ class BackboneAPIView(View):
     form = None  # The form class to be used for adding or editing objects.
     ordering = None  # Ordering used when retrieving the collection
     paginate_by = None  # The max number of objects per page (enables use of the ``page`` GET parameter).
+    url_slug = None  # The slug to be used when constructing the url (and url name) for this view.
+                     # Defaults to lowercase model name. Change this if you have multiple views for the same model.
 
     def queryset(self, request, **kwargs):
         """
@@ -115,7 +117,10 @@ class BackboneAPIView(View):
             response = self.get_object_detail(request, obj)
             response.status_code = 201
 
-            url_name = 'backbone:%s_%s_detail' % (self.model._meta.app_label, self.model._meta.module_name)
+            url_name = 'backbone:%s_%s_detail' % (
+                self.model._meta.app_label,
+                self.url_slug or self.model._meta.module_name
+            )
             response['Location'] = reverse(url_name, args=[obj.id])
             return response
         else:
