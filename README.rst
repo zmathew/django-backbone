@@ -126,8 +126,10 @@ Reversing the API urls
 
 The following named URL patterns are provided for all models that are registered:
 
-* Collection URL: ``backbone:<app_name>_<model_name>``
-* Model URL: ``backbone:<app_name>_<model_name>_detail``
+* Collection URL: ``backbone:<app_name>_<model_name>`` (reverses to ``/<app_name>/<model_name>/``)
+* Model URL: ``backbone:<app_name>_<model_name>_detail`` (reverses to ``/<app_name>/<model_name>/<object_id>``)
+
+You can change the ``<model_name>`` in the url (and url name) by specifying the ``url_slug`` attribute on the ``BackboneView`` class (just be sure it doesn't collide with another view).
 
 
 
