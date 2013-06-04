@@ -24,10 +24,10 @@ class BackboneSite(object):
         urlpatterns = patterns('')
         for view_class in self._registry:
             app_label = view_class.model._meta.app_label
-            module_name = view_class.model._meta.module_name
+            url_slug = view_class.url_slug or view_class.model._meta.module_name
 
-            url_path_prefix = r'^%s/%s' % (app_label, module_name)
-            base_url_name = '%s_%s' % (app_label, module_name)
+            url_path_prefix = r'^%s/%s' % (app_label, url_slug)
+            base_url_name = '%s_%s' % (app_label, url_slug)
 
             urlpatterns += patterns('',
                 url(url_path_prefix + '$', view_class.as_view(), name=base_url_name),
