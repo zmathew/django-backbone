@@ -254,7 +254,7 @@ class BackboneAPIView(View):
         for field in fields:
             if callable(field):  # Callable
                 data[field.__name__] = field(obj)
-            elif hasattr(self, field):  # Method on the view
+            elif hasattr(self, field) and callable(getattr(self, field)):  # Method on the view
                 data[field] = getattr(self, field)(obj)
             elif hasattr(obj, field):  # Callable/property/field on the model
                 attr = getattr(obj, field)
