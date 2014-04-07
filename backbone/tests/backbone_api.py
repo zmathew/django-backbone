@@ -12,7 +12,7 @@ class ProductBackboneView(BackboneAPIView):
     display_fields = (
         'creation_date', 'name', 'brand', 'categories', 'price', 'order',
         'is_priced_under_10', 'get_first_category_id', sku, 'custom2')
-    fields = ('name', 'brand', 'categories', 'price', 'order',)
+    fields = ('name', 'brand', 'categories', 'price', 'order', 'sale_date',)
     ordering = ('order', 'id')
 
     def custom2(self, obj):

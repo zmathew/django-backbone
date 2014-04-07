@@ -25,6 +25,7 @@ class Product(models.Model):
     price = models.DecimalField(max_digits=8, decimal_places=2)
     order = models.PositiveSmallIntegerField(default=0)
     sku = models.CharField(max_length=255)
+    sale_date = models.DateTimeField(null=True, blank=True)
 
     class Meta:
         ordering = ('id',)

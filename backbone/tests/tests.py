@@ -1,3 +1,4 @@
+import datetime
 from decimal import Decimal
 import json
 
@@ -22,7 +23,7 @@ class TestHelper(TestCase):
         defaults = {
             'name': 'Test Product',
             'price': '12.32',
-            'sku': '12345678'
+            'sku': '12345678',
         }
         if 'brand' not in kwargs:
             defaults['brand'] = self.create_brand()
@@ -317,7 +318,8 @@ class AddTests(TestHelper):
             'brand': brand.id,
             'categories': [cat1.id, cat2.id],
             'price': 12.34,
-            'order': 1
+            'order': 1,
+            'sale_date': '2006-10-25 14:30:59',
         })
         url = reverse('backbone:tests_product')
         response = self.client.post(url, data, content_type='application/json')
@@ -331,6 +333,7 @@ class AddTests(TestHelper):
         self.assertEqual(product.categories.all()[0], cat1)
         self.assertEqual(product.categories.all()[1], cat2)
         self.assertEqual(product.price, Decimal('12.34'))
+        self.assertEqual(product.sale_date, datetime.datetime(2006, 10, 25, 14, 30, 59))
 
         data = self.parseJsonResponse(response, status_code=201)
         self.assertEqual(data['id'], product.id)
