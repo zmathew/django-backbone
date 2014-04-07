@@ -1,5 +1,6 @@
 import json
 
+from django.conf import settings
 from django.core.serializers.json import DjangoJSONEncoder
 from django.core.urlresolvers import reverse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -37,6 +38,9 @@ class BackboneAPIView(View):
         """
         Handles get requests for either the collection or an object detail.
         """
+        if not self.has_get_permission(request):
+            return HttpResponseForbidden(_('You do not have permission to perform this action.'))
+
         if id:
             obj = get_object_or_404(self.queryset(request, **kwargs), id=id)
             return self.get_object_detail(request, obj)
@@ -196,6 +200,12 @@ class BackboneAPIView(View):
         """
         obj.delete()
         return HttpResponse(status=204)
+
+    def has_get_permission(self, request):
+        """
+        Returns True if the requesting user is allowed to retrieve objects.
+        """
+        return True
 
     def has_add_permission(self, request):
         """
