@@ -1,15 +1,15 @@
 import json
 
 from django.core.serializers.json import DjangoJSONEncoder
+from django.core.serializers.python import Serializer
 from django.core.urlresolvers import reverse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.db.models import Manager, Model
 from django.forms.models import modelform_factory
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseForbidden
 from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _
 from django.views.generic import View
-
-from backbone.serializers import AllFieldsSerializer
 
 
 class BackboneAPIView(View):
@@ -120,10 +120,11 @@ class BackboneAPIView(View):
             response = self.get_object_detail(request, obj)
             response.status_code = 201
 
-            url_name = 'backbone:%s_%s_detail' % (
-                self.model._meta.app_label,
-                self.url_slug or self.model._meta.module_name
+            opts = self.model._meta
+            url_slug = self.url_slug or (
+                opts.model_name if hasattr(opts, 'model_name') else opts.module_name
             )
+            url_name = 'backbone:%s_%s_detail' % (self.model._meta.app_label, url_slug)
             response['Location'] = reverse(url_name, args=[obj.id])
             return response
         else:
@@ -255,7 +256,7 @@ class BackboneAPIView(View):
 
     def serialize(self, obj, fields):
         """
-        Serializes a single model instance to a Python object, based on the specified list of fields.
+        Serializes a single model instance to a Python dict, based on the specified list of fields.
         """
 
         data = {}
@@ -267,7 +268,11 @@ class BackboneAPIView(View):
                 data[field] = getattr(self, field)(obj)
             elif hasattr(obj, field):  # Callable/property/field on the model
                 attr = getattr(obj, field)
-                if callable(attr):  # Callable on the model
+                if isinstance(attr, Model):
+                    data[field] = attr.pk
+                elif isinstance(attr, Manager):
+                    data[field] = [item['pk'] for item in attr.values('pk')]
+                elif callable(attr):  # Callable on the model
                     data[field] = attr()
                 else:
                     remaining_fields.append(field)
@@ -275,7 +280,7 @@ class BackboneAPIView(View):
                 raise AttributeError('Invalid field: %s' % field)
 
         # Add on db fields
-        serializer = AllFieldsSerializer()
+        serializer = Serializer()
         serializer.serialize([obj], fields=list(remaining_fields))
         data.update(serializer.getvalue()[0]['fields'])
 

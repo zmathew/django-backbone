@@ -53,6 +53,7 @@ backbone.site.register(BrandBackboneView)
 class BrandAlternateBackboneView(BackboneAPIView):
     model = Brand
     display_fields = ['id', 'custom']
+    fields = ('name',)
     url_slug = 'brand_alternate'
 
     def custom(self, obj):

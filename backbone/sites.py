@@ -21,7 +21,11 @@ class BackboneSite(object):
         urlpatterns = patterns('')
         for view_class in self._registry:
             app_label = view_class.model._meta.app_label
-            url_slug = view_class.url_slug or view_class.model._meta.module_name
+
+            opts = view_class.model._meta
+            url_slug = view_class.url_slug or (
+                opts.model_name if hasattr(opts, 'model_name') else opts.module_name
+            )
 
             url_path_prefix = r'^%s/%s' % (app_label, url_slug)
             base_url_name = '%s_%s' % (app_label, url_slug)

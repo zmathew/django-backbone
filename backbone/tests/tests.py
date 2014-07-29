@@ -348,10 +348,6 @@ class AddTests(TestHelper):
 
     def test_post_request_on_product_collection_view_with_invalid_json_returns_error(self):
         url = reverse('backbone:tests_product')
-        response = self.client.post(url, '', content_type='application/json')
-        self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.content, _('Unable to parse JSON request body.'))
-
         response = self.client.post(url, 'Some invalid json', content_type='application/json')
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.content, _('Unable to parse JSON request body.'))
