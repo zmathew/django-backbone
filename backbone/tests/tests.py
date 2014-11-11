@@ -667,5 +667,5 @@ class InvalidViewTests(TestHelper):
         url = reverse('backbone:tests_brand_detail', args=[brand.id])
         try:
             self.client.get(url)
-        except AttributeError, err:
+        except AttributeError as err:
             self.assertEqual(str(err), "Invalid field: invalid_field")
