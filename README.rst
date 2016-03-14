@@ -157,10 +157,10 @@ Running the tests
 ::
 
     # For Django 1.6+
-    ./manage.py test backbone.tests --settings=backbone.tests.settings
+    django-admin test backbone.tests --settings=backbone.tests.settings
 
     # For Django < 1.6
-    ./manage.py test tests --settings=backbone.tests.settings
+    django-admin test tests --settings=backbone.tests.settings
 
 
 
