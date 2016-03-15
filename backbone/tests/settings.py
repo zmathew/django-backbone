@@ -1,8 +1,17 @@
+from __future__ import unicode_literals
+
 import os
 
 # Settings for running tests.
 
 DEBUG = True
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'APP_DIRS': True
+    },
+]
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',

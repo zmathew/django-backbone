@@ -1,3 +1,5 @@
+from __future__ import unicode_literals
+
 import backbone
 from backbone.views import BackboneAPIView
 from backbone.tests.forms import BrandForm

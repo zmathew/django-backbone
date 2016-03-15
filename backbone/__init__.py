@@ -1,5 +1,7 @@
 """Provides a Backbone.js compatible REST API for your models using Django Admin style registration."""
 
+from __future__ import unicode_literals
+
 from backbone.sites import BackboneSite
 
 
@@ -17,7 +19,12 @@ def autodiscover():
     """
     # This code is based off django.contrib.admin.__init__
     from django.conf import settings
-    from django.utils.importlib import import_module
+    try:
+        # Django versions >= 1.9
+        from django.utils.module_loading import import_module
+    except ImportError:
+        # Django versions < 1.9
+        from django.utils.importlib import import_module
     from django.utils.module_loading import module_has_submodule
     from backbone.views import BackboneAPIView  # This is to prevent a circular import issue
 

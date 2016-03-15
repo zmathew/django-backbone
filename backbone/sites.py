@@ -1,3 +1,6 @@
+from __future__ import unicode_literals
+
+
 class BackboneSite(object):
 
     def __init__(self, name='backbone'):
@@ -18,7 +21,7 @@ class BackboneSite(object):
     def get_urls(self):
         from django.conf.urls import patterns, url
 
-        urlpatterns = patterns('')
+        urlpatterns = []
         for view_class in self._registry:
             app_label = view_class.model._meta.app_label
 
@@ -30,11 +33,11 @@ class BackboneSite(object):
             url_path_prefix = r'^%s/%s' % (app_label, url_slug)
             base_url_name = '%s_%s' % (app_label, url_slug)
 
-            urlpatterns += patterns('',
+            urlpatterns = urlpatterns + [
                 url(url_path_prefix + '$', view_class.as_view(), name=base_url_name),
                 url(url_path_prefix + '/(?P<id>\d+)$', view_class.as_view(),
                     name=base_url_name + '_detail')
-            )
+            ]
         return urlpatterns
 
     @property
