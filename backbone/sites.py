@@ -19,7 +19,7 @@ class BackboneSite(object):
             self._registry.remove(backbone_view_class)
 
     def get_urls(self):
-        from django.conf.urls import patterns, url
+        from django.conf.urls import url
 
         urlpatterns = []
         for view_class in self._registry:
