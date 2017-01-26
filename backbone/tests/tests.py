@@ -1,3 +1,5 @@
+from __future__ import unicode_literals
+
 import datetime
 from decimal import Decimal
 import json
@@ -191,7 +193,7 @@ class CollectionTests(TestHelper):
 class DetailTests(TestHelper):
 
     def test_detail_view_returns_object_details(self):
-        product = self.create_product(price=3)
+        product = self.create_product(price='3.00')
         category = self.create_category()
         product.categories.add(category)
 
@@ -202,7 +204,7 @@ class DetailTests(TestHelper):
         self.assertEqual(data['name'], product.name)
         self.assertEqual(data['brand'], product.brand.id)
         self.assertEqual(data['categories'], [category.id])
-        self.assertEqual(data['price'], str(product.price))
+        self.assertEqual(data['price'], product.price)
         self.assertEqual(data['order'], product.order)
         # Attribute on model
         self.assertEqual(data['is_priced_under_10'], True)
@@ -342,9 +344,9 @@ class AddTests(TestHelper):
         self.assertEqual(data['categories'], [cat1.id, cat2.id])
         self.assertEqual(data['price'], '12.34')
 
-        self.assertEqual(response['Location'], 'http://testserver' \
-            + reverse('backbone:tests_product_detail', args=[product.id])
-        )
+        self.assertTrue(response['Location'].endswith(
+            reverse('backbone:tests_product_detail', args=[product.id])
+        ))
 
     def test_post_request_on_product_collection_view_with_invalid_json_returns_error(self):
         url = reverse('backbone:tests_product')
@@ -441,12 +443,9 @@ class AddTests(TestHelper):
         self.assertEqual(response.status_code, 201)
         self.assertEqual(Brand.objects.count(), 1)
 
-        self.assertEqual(
-            response['Location'],
-            'http://testserver' + reverse(
-                'backbone:tests_brand_alternate_detail', args=[Brand.objects.get().id]
-            )
-        )
+        self.assertTrue(response['Location'].endswith(reverse(
+            'backbone:tests_brand_alternate_detail', args=[Brand.objects.get().id]
+        )))
 
 
 class UpdateTests(TestHelper):
@@ -635,7 +634,7 @@ class DeleteTests(TestHelper):
 class InheritanceTests(TestHelper):
 
     def test_detail_view_returns_inherited_object_details(self):
-        ext_product = self.create_extended_product(price=9)
+        ext_product = self.create_extended_product(price='9.00')
         category = self.create_category()
         ext_product.categories.add(category)
 
@@ -646,7 +645,7 @@ class InheritanceTests(TestHelper):
         self.assertEqual(data['name'], ext_product.name)
         self.assertEqual(data['brand'], ext_product.brand.id)
         self.assertEqual(data['categories'], [category.id])
-        self.assertEqual(data['price'], str(ext_product.price))
+        self.assertEqual(data['price'], ext_product.price)
         self.assertEqual(data['order'], ext_product.order)
         self.assertEqual(data['description'], ext_product.description)
         # Attribute on model
@@ -667,5 +666,5 @@ class InvalidViewTests(TestHelper):
         url = reverse('backbone:tests_brand_detail', args=[brand.id])
         try:
             self.client.get(url)
-        except AttributeError, err:
+        except AttributeError as err:
             self.assertEqual(str(err), "Invalid field: invalid_field")
