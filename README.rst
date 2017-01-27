@@ -1,4 +1,4 @@
-**This project is no longer maintained.**
+**This project is no longer maintained. Use: https://github.com/thijstriemstra/django-backbone/**
 
 ===============
 django-backbone
